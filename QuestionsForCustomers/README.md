@@ -1,5 +1,5 @@
 ## Questions For Customers
-### This folder contains each team members file of each members thoughts and questions about the project.
+### This folder contains customer-facing questions and project insights from each team member.
 
 
 
