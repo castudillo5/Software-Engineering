@@ -1,11 +1,11 @@
 # Software-Engineering
 
 # Members:
-## Carlos Astudillo
-## Jacob Lawler
-## James Odjewuy
-## Mekhi Prospere
-## Kevin Kangethe
+### Carlos Astudillo
+### Jacob Lawler
+### James Odjewuy
+### Mekhi Prospere
+### Kevin Kangethe
 
 # Project:
-## Academic Advising 
+### Academic Advising 
