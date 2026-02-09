@@ -10,7 +10,7 @@
 | F1  | [Link](https://github.com/castudillo5/Software-Engineering/blob/main/QuestionsForCustomers/Carlos%20Astudillo.pdf) | Carlos Astudillo |
 | F2 | [Link](https://github.com/castudillo5/Software-Engineering/blob/main/QuestionsForCustomers/Jacob%20Lawler.pdf ) | Jacob Lawler |
 | F3 | [Link](https://github.com/castudillo5/Software-Engineering/blob/main/QuestionsForCustomers/James%20Odjewuy.pdf ) | James Odjewuy |
-| F4 | [Link]( ) | Mekhi Prospere |
+| F4 | [Link](https://github.com/castudillo5/Software-Engineering/blob/main/QuestionsForCustomers/Mekhi%20Prospere.pdf ) | Mekhi Prospere |
 | F5 | [Link]( ) | Kevin Kangethe |
 
 
