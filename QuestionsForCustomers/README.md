@@ -7,5 +7,5 @@
 
 |  #  | Folder Link | Assignment Description |
 | :-: | ----------- | ---------------------- |
-|  A01  |  |  |
+|  A01  | https://github.com/castudillo5/Software-Engineering/blob/main/QuestionsForCustomers/Carlos%20Astudillo.pdf | Carlos Astudillo |
 
