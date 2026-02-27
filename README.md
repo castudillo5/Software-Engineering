@@ -1,6 +1,5 @@
 # Software-Engineering
 
-# Team Availability
 
 # Team Availability
 
