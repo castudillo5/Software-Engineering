@@ -5,14 +5,14 @@
 ## UI Design
 
 ### Dashboard – Degree Progress Overview
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](GUI design/dashboard.png)
 
 ### Schedule – Current, Past & Future Courses
-![Schedule](screenshots/schedule.png)
+![Schedule](GUI design/schedule.png)
 
 ### Registration – Browse & Register for Courses
-![Registration](screenshots/registration.png)
+![Registration](GUI design/registration.png)
 
 ### Alerts & Notifications
-![Alerts](screenshots/alerts.png)
+![Alerts](GUI design/alerts.png)
 
