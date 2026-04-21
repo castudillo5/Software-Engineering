@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack – Schedule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-page:        #F4F3EF;
+      --bg-surface:     #FFFFFF;
+      --bg-muted:       #F0EFEB;
+      --text-primary:   #1A1916;
+      --text-secondary: #6B6A65;
+      --text-tertiary:  #9E9C97;
+      --border:         rgba(26,25,22,0.10);
+      --border-med:     rgba(26,25,22,0.16);
+      --accent:         #2B5CE6;
+      --accent-bg:      #EEF2FD;
+      --accent-text:    #1A3DA3;
+      --drop-bg:        #FEE2E2;
+      --drop-text:      #B91C1C;
+      --cr-bg:          #DBEAFE;
+      --cr-text:        #1E40AF;
+      --radius-sm:      6px;
+      --radius-md:      10px;
+      --radius-lg:      14px;
+      --sidebar-w:      224px;
+      --shadow-card:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .layout { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidebar-brand { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
+    .brand-name { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+    .brand-sub  { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+
+    .nav { padding: 10px 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px;
+      font-size: 14px; color: var(--text-secondary);
+      cursor: pointer; transition: background 0.12s, color 0.12s;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--bg-muted); color: var(--text-primary); }
+    .nav-item.active { background: var(--bg-muted); color: var(--text-primary); font-weight: 500; }
+    .nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.65; }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-badge {
+      margin-left: auto; background: #E5342A; color: #fff;
+      font-size: 11px; font-weight: 600; border-radius: 20px; padding: 1px 7px; line-height: 16px;
+    }
+    .sidebar-user {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 500; line-height: 1.3; }
+    .user-dept { font-size: 11px; color: var(--text-tertiary); }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 28px 0;
+      flex-shrink: 0;
+    }
+    .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.4px; }
+    .page-sub   { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 0; margin-top: 18px; }
+    .tab {
+      padding: 10px 24px 12px;
+      cursor: pointer; text-align: center;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.15s, color 0.15s;
+      user-select: none;
+    }
+    .tab-label { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+    .tab-sub   { font-size: 12px; color: var(--text-tertiary); margin-top: 1px; }
+    .tab.active .tab-label { color: var(--accent); }
+    .tab.active .tab-sub   { color: var(--accent); opacity: 0.8; }
+    .tab.active { border-bottom-color: var(--accent); }
+    .tab:hover .tab-label { color: var(--text-primary); }
+
+    /* ── Scroll content ── */
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px 40px; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Term header card ── */
+    .term-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .term-name  { font-size: 16px; font-weight: 600; }
+    .term-meta  { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+    .term-right { display: flex; align-items: center; gap: 12px; }
+    .term-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .term-status svg { opacity: 0.55; }
+    .view-btns { display: flex; gap: 4px; }
+    .view-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-med);
+      background: var(--bg-surface);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary);
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .view-btn:hover { background: var(--bg-muted); }
+    .view-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+    /* ── Card grid ── */
+    .course-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .course-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow-card);
+    }
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .card-code { font-size: 15px; font-weight: 600; font-family: 'DM Mono', monospace; }
+    .card-name { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+    .card-badges { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+    .cr-badge {
+      background: var(--cr-bg); color: var(--cr-text);
+      font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+    .drop-btn {
+      background: var(--drop-bg); color: var(--drop-text);
+      font-size: 12px; font-weight: 600; padding: 3px 12px; border-radius: 20px;
+      border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.12s;
+    }
+    .drop-btn:hover { opacity: 0.8; }
+
+    .card-details { display: flex; flex-direction: column; gap: 6px; }
+    .card-detail {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .card-detail svg { flex-shrink: 0; opacity: 0.55; }
+
+    /* ── Calendar view ── */
+    .cal-wrap { overflow-x: auto; }
+    .cal-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    .cal-table th {
+      font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      padding: 10px 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      text-align: center;
+    }
+    .cal-table th:first-child { width: 76px; background: var(--bg-surface); }
+    .cal-table td {
+      border: 1px solid var(--border);
+      vertical-align: top;
+      padding: 0;
+      background: var(--bg-surface);
+      height: 50px;
+      position: relative;
+    }
+    .cal-table td:first-child {
+      font-size: 12px; color: var(--text-tertiary);
+      padding: 6px 10px 0 6px;
+      text-align: right; white-space: nowrap;
+      vertical-align: top;
+      background: var(--bg-surface);
+    }
+
+    /* Course block inside calendar */
+    .cal-event {
+      position: absolute;
+      left: 3px; right: 3px;
+      border-radius: 5px;
+      padding: 4px 6px;
+      font-size: 11px;
+      overflow: hidden;
+      border-left: 3px solid;
+      cursor: default;
+    }
+    .cal-event-code { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-event-name { opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .cal-event-room { opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Color themes for courses */
+    .ev-blue   { background: #EFF6FF; border-left-color: #3B82F6; color: #1E40AF; }
+    .ev-purple { background: #F5F3FF; border-left-color: #8B5CF6; color: #5B21B6; }
+    .ev-teal   { background: #F0FDFA; border-left-color: #14B8A6; color: #0F766E; }
+    .ev-amber  { background: #FFFBEB; border-left-color: #F59E0B; color: #92400E; }
+    .ev-green  { background: #F0FDF4; border-left-color: #22C55E; color: #166534; }
+
+    /* Course history list view only (no toggle) */
+    .history-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .history-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* ── Help btn ── */
+    .help-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-surface); border: 1px solid var(--border-med);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary); font-size: 15px; font-weight: 600;
+      transition: background 0.12s, color 0.12s;
+    }
+    .help-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">UniTrack</div>
+      <div class="brand-sub">Degree Progress System</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M5 8h6M5 11h4"/></svg>
+        Home
+      </div>
+      <div class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>
+        Schedule
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4.5h12M2 8h8M2 11.5h5"/></svg>
+        Registration
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/><path d="M8 12v2"/><path d="M6 13.5h4"/></svg>
+        Alerts
+        <span class="nav-badge">6</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">SJ</div>
+      <div>
+        <div class="user-name">Sarah Johnson</div>
+        <div class="user-dept">Computer Science</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title">Course Schedule</div>
+      <div class="page-sub">View your current, past, and planned future courses</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('current')">
+          <div class="tab-label">Current Schedule</div>
+          <div class="tab-sub">Spring 2026</div>
+        </div>
+        <div class="tab" onclick="switchTab('future')">
+          <div class="tab-label">Future Schedule</div>
+          <div class="tab-sub">Fall 2026</div>
+        </div>
+        <div class="tab" onclick="switchTab('history')">
+          <div class="tab-label">Course History</div>
+          <div class="tab-sub">All Completed Courses</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ CURRENT SCHEDULE ══ -->
+      <div class="tab-panel active" id="panel-current">
+        <div class="term-card">
+          <div>
+            <div class="term-name">Spring 2026</div>
+            <div class="term-meta">4 courses &bull; 14 total credits</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>
+              In Progress
+            </div>
+            <div class="view-btns">
+              <button class="view-btn active" id="cur-grid-btn" onclick="setView('current','grid')" title="Card view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="view-btn" id="cur-cal-btn" onclick="setView('current','cal')" title="Calendar view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h12M1 3h14v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/><path d="M5 8h2M9 8h2M5 11h2M9 11h2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card view -->
+        <div id="cur-grid" class="course-grid">
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4400</div>
+                <div class="card-name">Artificial Intelligence</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">4 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Catherine Stringfellow</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 10:00 AM - 11:20 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 140</div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4250</div>
+                <div class="card-name">Distributed Systems</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">4 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Terry Griffin</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 2:00 PM - 3:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 240</div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4210</div>
+                <div class="card-name">Programming Languages</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">3 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Nelson Passos</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 1:00 PM - 2:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 130</div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">MATH 4160</div>
+                <div class="card-name">Abstract Linear Algebra</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">3 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Jeff Hood</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 9:00 AM - 9:50 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 314</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar view (hidden by default) -->
+        <div id="cur-cal" style="display:none;">
+          <div class="cal-wrap">
+            <table class="cal-table" id="cur-cal-table"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ FUTURE SCHEDULE ══ -->
+      <div class="tab-panel" id="panel-future">
+        <div class="term-card">
+          <div>
+            <div class="term-name">Fall 2026</div>
+            <div class="term-meta">3 courses &bull; 10 total credits</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>
+              Planned
+            </div>
+            <div class="view-btns">
+              <button class="view-btn active" id="fut-grid-btn" onclick="setView('future','grid')" title="Card view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="view-btn" id="fut-cal-btn" onclick="setView('future','cal')" title="Calendar view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h12M1 3h14v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/><path d="M5 8h2M9 8h2M5 11h2M9 11h2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="fut-grid" class="course-grid">
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4980</div>
+                <div class="card-name">Cloud Computing</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">3 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Nelson Passos</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 11:00 AM - 12:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 140</div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4380</div>
+                <div class="card-name">Computer Networks</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">4 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Mika Morgan</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 2:00 PM - 3:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 240</div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="card-top">
+              <div>
+                <div class="card-code">CS 4190</div>
+                <div class="card-name">Production Systems</div>
+              </div>
+              <div class="card-badges">
+                <span class="cr-badge">3 CR</span>
+                <button class="drop-btn">Drop</button>
+              </div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Catherine Stringfellow</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 3:30 PM - 4:50 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 130</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fut-cal" style="display:none;">
+          <div class="cal-wrap">
+            <table class="cal-table" id="fut-cal-table"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ COURSE HISTORY ══ -->
+      <div class="tab-panel" id="panel-history">
+        <div class="term-card">
+          <div>
+            <div class="term-name">All Completed Courses</div>
+            <div class="term-meta">18 courses &bull; 63 total credits</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>
+              Completed
+            </div>
+          </div>
+        </div>
+        <div class="history-grid">
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 3740</div><div class="card-name">Algorithms &amp; Models</div></div>
+              <div class="card-badges"><span class="cr-badge">4 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Mika Morgan</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 11:00 AM - 12:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 140</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 3610</div><div class="card-name">Database Systems</div></div>
+              <div class="card-badges"><span class="cr-badge">3 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Catherine Stringfellow</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 3:00 PM - 4:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 212</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 3420</div><div class="card-name">Software Design</div></div>
+              <div class="card-badges"><span class="cr-badge">3 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Terry Griffin</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 1:00 PM - 2:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 130</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 3240</div><div class="card-name">Computer Architecture</div></div>
+              <div class="card-badges"><span class="cr-badge">4 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Nelson Passos</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 9:00 AM - 10:20 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 240</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 2200</div><div class="card-name">Data Structures</div></div>
+              <div class="card-badges"><span class="cr-badge">3 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Terry Griffin</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 10:00 AM - 11:20 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 110</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">MATH 1920</div><div class="card-name">Calculus II</div></div>
+              <div class="card-badges"><span class="cr-badge">4 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Jeff Hood</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 8:00 AM - 9:20 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Math Hall 201</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">CS 1100</div><div class="card-name">Intro to Computer Science</div></div>
+              <div class="card-badges"><span class="cr-badge">3 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Mika Morgan</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>TR &bull; 9:30 AM - 10:45 AM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Tech Hall 101</div>
+            </div>
+          </div>
+          <div class="history-card">
+            <div class="card-top">
+              <div><div class="card-code">ENGL 1010</div><div class="card-name">English Composition I</div></div>
+              <div class="card-badges"><span class="cr-badge">3 CR</span></div>
+            </div>
+            <div class="card-details">
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Dr. Sarah Mitchell</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>MWF &bull; 11:00 AM - 12:20 PM</div>
+              <div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>Bolin Hall 150</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="help-btn" title="Help">?</div>
+
+<script>
+  /* ── Tab switching ── */
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach((t,i) => {
+      const names = ['current','future','history'];
+      t.classList.toggle('active', names[i] === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  /* ── Grid / Calendar toggle ── */
+  function setView(term, mode) {
+    const gridEl   = document.getElementById(term.slice(0,3) + '-grid');
+    const calEl    = document.getElementById(term.slice(0,3) + '-cal');
+    const gridBtn  = document.getElementById(term.slice(0,3) + '-grid-btn');
+    const calBtn   = document.getElementById(term.slice(0,3) + '-cal-btn');
+
+    const showGrid = mode === 'grid';
+    gridEl.style.display  = showGrid ? '' : 'none';
+    calEl.style.display   = showGrid ? 'none' : '';
+    gridBtn.classList.toggle('active', showGrid);
+    calBtn.classList.toggle('active', !showGrid);
+
+    if (mode === 'cal') buildCalendar(term);
+  }
+
+  /* ── Calendar builder ── */
+  const COURSES = {
+    current: [
+      { code:'MATH 4160', name:'Abstract Linear Algebra', room:'Bolin Hall 314', days:['Mon','Wed','Fri'], startMin:540,  endMin:590,  color:'ev-blue'   },
+      { code:'CS 4400',   name:'Artificial Intelligence', room:'Bolin Hall 140', days:['Mon','Wed','Fri'], startMin:600,  endMin:680,  color:'ev-purple' },
+      { code:'CS 4210',   name:'Programming Languages',   room:'Bolin Hall 130', days:['Mon','Wed','Fri'], startMin:780,  endMin:860,  color:'ev-teal'   },
+      { code:'CS 4250',   name:'Distributed Systems',     room:'Bolin Hall 240', days:['Tue','Thu'],       startMin:840,  endMin:920,  color:'ev-amber'  },
+    ],
+    future: [
+      { code:'CS 4980',  name:'Cloud Computing',   room:'Bolin Hall 140', days:['Tue','Thu'],       startMin:660,  endMin:740,  color:'ev-blue'   },
+      { code:'CS 4380',  name:'Computer Networks', room:'Bolin Hall 240', days:['Mon','Wed','Fri'], startMin:840,  endMin:920,  color:'ev-purple' },
+      { code:'CS 4190',  name:'Production Systems',room:'Bolin Hall 130', days:['Tue','Thu'],       startMin:930,  endMin:1010, color:'ev-teal'   },
+    ]
+  };
+
+  const DAYS = ['Mon','Tue','Wed','Thu','Fri'];
+  const SLOT_H = 50; // px per 30-min slot
+  const DAY_START = 8 * 60; // 8:00 AM in minutes
+
+  function minToLabel(m) {
+    const h = Math.floor(m/60), min = m%60;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    return `${h > 12 ? h-12 : h}:${min.toString().padStart(2,'0')} ${ampm}`;
+  }
+
+  function buildCalendar(term) {
+    const key = term === 'current' ? 'current' : 'future';
+    const tableId = key === 'current' ? 'cur-cal-table' : 'fut-cal-table';
+    const table = document.getElementById(tableId);
+    if (table.innerHTML !== '') return; // already built
+
+    const courses = COURSES[key];
+    // Determine time range
+    const allStart = courses.map(c => c.startMin);
+    const allEnd   = courses.map(c => c.endMin);
+    const minTime  = Math.min(...allStart, DAY_START);
+    const maxTime  = Math.max(...allEnd, minTime + 8*60);
+
+    // Round to nearest 30
+    const startSlot = Math.floor(minTime/30)*30;
+    const endSlot   = Math.ceil(maxTime/30)*30;
+    const slots = [];
+    for (let t = startSlot; t < endSlot; t += 30) slots.push(t);
+
+    // Header row
+    const thead = document.createElement('thead');
+    const hrow  = document.createElement('tr');
+    const thEmpty = document.createElement('th'); thEmpty.textContent = '';
+    hrow.appendChild(thEmpty);
+    DAYS.forEach(d => {
+      const th = document.createElement('th'); th.textContent = d;
+      hrow.appendChild(th);
+    });
+    thead.appendChild(hrow);
+    table.appendChild(thead);
+
+    // Body
+    const tbody = document.createElement('tbody');
+    slots.forEach(slotMin => {
+      const tr = document.createElement('tr');
+      // Time label
+      const tdTime = document.createElement('td');
+      tdTime.textContent = minToLabel(slotMin);
+      tr.appendChild(tdTime);
+      DAYS.forEach(day => {
+        const td = document.createElement('td');
+        td.style.position = 'relative';
+        td.style.height = SLOT_H + 'px';
+        // Check if any course starts in this slot on this day
+        courses.forEach(c => {
+          if (c.days.includes(day) && c.startMin === slotMin) {
+            const duration = c.endMin - c.startMin;
+            const heightPx = (duration / 30) * SLOT_H;
+            const ev = document.createElement('div');
+            ev.className = 'cal-event ' + c.color;
+            ev.style.top = '2px';
+            ev.style.height = (heightPx - 4) + 'px';
+            ev.innerHTML = `
+              <div class="cal-event-code">${c.code}</div>
+              <div class="cal-event-name">${c.name}</div>
+              <div class="cal-event-room">${c.room}</div>
+            `;
+            // Span rows via absolute + z-index — place in the starting row only
+            ev.style.zIndex = '2';
+            td.appendChild(ev);
+          }
+        });
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+</script>
+
+</body>
+</html>
