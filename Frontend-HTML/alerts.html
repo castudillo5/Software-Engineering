@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack – Alerts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-page:        #F4F3EF;
+      --bg-surface:     #FFFFFF;
+      --bg-muted:       #F0EFEB;
+      --text-primary:   #1A1916;
+      --text-secondary: #6B6A65;
+      --text-tertiary:  #9E9C97;
+      --border:         rgba(26,25,22,0.10);
+      --border-med:     rgba(26,25,22,0.16);
+      --accent:         #2B5CE6;
+      --radius-sm:      6px;
+      --radius-md:      10px;
+      --radius-lg:      14px;
+      --sidebar-w:      224px;
+      --shadow-card:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+
+      /* Critical */
+      --crit-bg:        #FEF2F2;
+      --crit-border:    #FECACA;
+      --crit-icon-bg:   #FEE2E2;
+      --crit-icon:      #DC2626;
+      --crit-title:     #991B1B;
+      --crit-badge-bg:  #DC2626;
+      --crit-btn-bg:    #FEE2E2;
+      --crit-btn-text:  #991B1B;
+      --crit-btn-border:#FECACA;
+
+      /* Warning */
+      --warn-bg:        #FFF7ED;
+      --warn-border:    #FED7AA;
+      --warn-icon-bg:   #FFEDD5;
+      --warn-icon:      #EA580C;
+      --warn-title:     #9A3412;
+      --warn-badge-bg:  #EA580C;
+      --warn-btn-bg:    var(--bg-surface);
+      --warn-btn-text:  var(--text-primary);
+      --warn-btn-border:var(--border-med);
+
+      /* Info */
+      --info-bg:        #EFF6FF;
+      --info-border:    #BFDBFE;
+      --info-icon-bg:   #DBEAFE;
+      --info-icon:      #2563EB;
+      --info-title:     #1E40AF;
+      --info-badge-bg:  #2563EB;
+      --info-btn-bg:    var(--bg-surface);
+      --info-btn-text:  var(--text-primary);
+      --info-btn-border:var(--border-med);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .layout { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidebar-brand { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
+    .brand-name { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+    .brand-sub  { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+
+    .nav { padding: 10px 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px;
+      font-size: 14px; color: var(--text-secondary);
+      cursor: pointer; transition: background 0.12s, color 0.12s;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--bg-muted); color: var(--text-primary); }
+    .nav-item.active { background: var(--bg-muted); color: var(--text-primary); font-weight: 500; }
+    .nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.65; }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-badge {
+      margin-left: auto; background: #E5342A; color: #fff;
+      font-size: 11px; font-weight: 600; border-radius: 20px;
+      padding: 1px 7px; line-height: 16px;
+    }
+    .sidebar-user {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 500; line-height: 1.3; }
+    .user-dept { font-size: 11px; color: var(--text-tertiary); }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 28px 18px;
+      flex-shrink: 0;
+    }
+    .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.4px; }
+    .page-sub   { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+
+    /* ── Summary pills ── */
+    .summary-row {
+      display: flex; align-items: center; gap: 20px;
+      margin-top: 16px;
+    }
+    .summary-pill {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+    }
+    .pill-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .pill-dot.critical { background: #DC2626; }
+    .pill-dot.warning  { background: #EA580C; }
+    .pill-dot.info     { background: #2563EB; }
+    .summary-pill span.count { color: var(--text-primary); }
+
+    /* ── Scroll content ── */
+    .content { flex: 1; overflow-y: auto; padding: 24px 28px 40px; }
+
+    /* ── Section title ── */
+    .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+    /* ── Alert card base ── */
+    .alert-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 16px;
+      position: relative;
+    }
+
+    /* Type variants */
+    .alert-card.critical {
+      background: var(--crit-bg);
+      border-color: var(--crit-border);
+    }
+    .alert-card.warning {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+    }
+    .alert-card.info {
+      background: var(--info-bg);
+      border-color: var(--info-border);
+    }
+
+    /* Icon circle */
+    .alert-icon {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .critical .alert-icon { background: var(--crit-icon-bg); color: var(--crit-icon); }
+    .warning  .alert-icon { background: var(--warn-icon-bg); color: var(--warn-icon); }
+    .info     .alert-icon { background: var(--info-icon-bg); color: var(--info-icon); }
+
+    .alert-body { flex: 1; min-width: 0; }
+
+    /* Badge (top-right) */
+    .alert-badge {
+      position: absolute; top: 18px; right: 20px;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 11px; border-radius: 20px;
+      color: #fff; letter-spacing: 0.4px;
+    }
+    .critical .alert-badge { background: var(--crit-badge-bg); }
+    .warning  .alert-badge { background: var(--warn-badge-bg); }
+    .info     .alert-badge { background: var(--info-badge-bg); }
+
+    .alert-title {
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 4px; padding-right: 80px;
+      line-height: 1.3;
+    }
+    .critical .alert-title { color: var(--crit-title); }
+    .warning  .alert-title { color: var(--warn-title); }
+    .info     .alert-title { color: var(--info-title); }
+
+    .alert-date {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+    .alert-date svg { opacity: 0.6; }
+
+    .alert-text {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.6; margin-bottom: 14px;
+    }
+
+    /* Action buttons */
+    .alert-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .alert-btn {
+      height: 32px; padding: 0 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; border: 1px solid;
+      transition: opacity 0.12s, background 0.12s;
+      white-space: nowrap;
+    }
+    .alert-btn:hover { opacity: 0.82; }
+
+    .alert-btn.primary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-color: var(--border-med);
+    }
+    .alert-btn.primary:hover { background: var(--bg-muted); opacity: 1; }
+
+    /* Critical buttons get a filled red style */
+    .critical .alert-btn.primary {
+      background: var(--crit-btn-bg);
+      color: var(--crit-btn-text);
+      border-color: var(--crit-btn-border);
+    }
+    .critical .alert-btn.primary:hover { opacity: 0.8; }
+
+    .alert-btn.danger {
+      background: #DC2626; color: #fff;
+      border-color: #DC2626;
+    }
+
+    /* ── Empty state (no alerts of a type) ── */
+    .empty-section {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 14px;
+      font-size: 13px; color: var(--text-tertiary);
+    }
+    .empty-section svg { opacity: 0.4; flex-shrink: 0; }
+
+    /* ── Dismissed section ── */
+    .dismissed-section { margin-top: 32px; }
+    .dismissed-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .dismissed-title { font-size: 13px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .dismissed-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 14px;
+      opacity: 0.65;
+    }
+    .dismissed-icon {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg-muted);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--text-tertiary);
+    }
+    .dismissed-text { flex: 1; }
+    .dismissed-name { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+    .dismissed-date { font-size: 12px; color: var(--text-tertiary); }
+    .dismissed-tag {
+      font-size: 11px; font-weight: 600; padding: 2px 9px;
+      border-radius: 20px; background: var(--bg-muted);
+      color: var(--text-tertiary); border: 1px solid var(--border);
+    }
+
+    /* ── Help btn ── */
+    .help-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-surface); border: 1px solid var(--border-med);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-secondary); font-size: 15px; font-weight: 600;
+      transition: background 0.12s, color 0.12s;
+    }
+    .help-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">UniTrack</div>
+      <div class="brand-sub">Degree Progress System</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M5 8h6M5 11h4"/></svg>
+        Home
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>
+        Schedule
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4.5h12M2 8h8M2 11.5h5"/></svg>
+        Registration
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/><path d="M8 12v2"/><path d="M6 13.5h4"/></svg>
+        Alerts
+        <span class="nav-badge">2</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">SJ</div>
+      <div>
+        <div class="user-name">Sarah Johnson</div>
+        <div class="user-dept">Computer Science</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title">Alerts &amp; Notifications</div>
+      <div class="page-sub">Important updates and action items for your academic progress</div>
+      <div class="summary-row">
+        <div class="summary-pill">
+          <span class="pill-dot critical"></span>
+          <span class="count" id="count-critical">0</span> Critical
+        </div>
+        <div class="summary-pill">
+          <span class="pill-dot warning"></span>
+          <span class="count" id="count-warning">1</span> Warning
+        </div>
+        <div class="summary-pill">
+          <span class="pill-dot info"></span>
+          <span class="count" id="count-info">1</span> Info
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section-title">Active Alerts</div>
+
+      <!-- ══ CRITICAL SECTION ══ -->
+      <!-- Example critical alert (hidden by default — shown here for reference) -->
+      <div class="alert-card critical" id="alert-critical-1" style="display:none;">
+        <div class="alert-icon">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v5M8 10.5v1"/><path d="M1.5 13L8 2l6.5 11H1.5z"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">Academic Standing at Risk</div>
+          <div class="alert-date">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+            April 10, 2026
+          </div>
+          <div class="alert-text">
+            Your current GPA has dropped below 2.0, placing you on academic probation. You must meet with your academic advisor within 5 business days and submit an Academic Improvement Plan. Failure to act may result in suspension.
+          </div>
+          <div class="alert-actions">
+            <button class="alert-btn primary" onclick="dismissAlert('alert-critical-1','critical')">Schedule advisor meeting</button>
+            <button class="alert-btn danger" onclick="dismissAlert('alert-critical-1','critical')">View academic policy</button>
+          </div>
+        </div>
+        <span class="alert-badge">CRITICAL</span>
+      </div>
+
+      <!-- No critical alerts placeholder (shown when count = 0) -->
+      <div class="empty-section" id="no-critical">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 10.5v.5"/></svg>
+        No critical alerts — you're in good standing.
+      </div>
+
+      <!-- ══ WARNING ══ -->
+      <div class="alert-card warning" id="alert-warning-1">
+        <div class="alert-icon">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 10.5v.5"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">Course Load Exceeds Recommendation</div>
+          <div class="alert-date">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+            March 10, 2026
+          </div>
+          <div class="alert-text">
+            Your current semester has 17 credit hours. The recommended maximum for maintaining a 3.5+ GPA is 15–16 credit hours. Consider dropping one course.
+          </div>
+          <div class="alert-actions">
+            <button class="alert-btn primary" onclick="dismissAlert('alert-warning-1','warning')">Review schedule with advisor</button>
+          </div>
+        </div>
+        <span class="alert-badge">WARNING</span>
+      </div>
+
+      <!-- ══ INFO ══ -->
+      <div class="alert-card info" id="alert-info-1">
+        <div class="alert-icon">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 7v5M8 5v.5"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">Upcoming Registration Deadline</div>
+          <div class="alert-date">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+            March 5, 2026
+          </div>
+          <div class="alert-text">
+            Priority registration for Fall 2026 ends on April 15, 2026. Make sure to complete your course registration before this date to avoid late fees.
+          </div>
+          <div class="alert-actions">
+            <button class="alert-btn primary" onclick="dismissAlert('alert-info-1','info')">Register for courses</button>
+          </div>
+        </div>
+        <span class="alert-badge">INFO</span>
+      </div>
+
+      <!-- ══ DISMISSED ══ -->
+      <div class="dismissed-section" id="dismissed-section" style="display:none;">
+        <div class="dismissed-header">
+          <span class="dismissed-title">Dismissed</span>
+        </div>
+        <div id="dismissed-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="help-btn" title="Help">?</div>
+
+<script>
+  const dismissed = [];
+
+  const META = {
+    critical: { label: 'CRITICAL', name: 'Academic Standing at Risk' },
+    warning:  { label: 'WARNING',  name: 'Course Load Exceeds Recommendation' },
+    info:     { label: 'INFO',     name: 'Upcoming Registration Deadline' },
+  };
+
+  function dismissAlert(id, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.style.transition = 'opacity 0.25s, transform 0.25s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(8px)';
+
+    setTimeout(() => {
+      el.style.display = 'none';
+      addDismissed(type);
+      updateCounts(type, -1);
+      updateNoAlerts(type);
+    }, 260);
+  }
+
+  function addDismissed(type) {
+    dismissed.push(type);
+    const section = document.getElementById('dismissed-section');
+    const list    = document.getElementById('dismissed-list');
+    section.style.display = 'block';
+
+    const meta = META[type];
+    const today = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+
+    const card = document.createElement('div');
+    card.className = 'dismissed-card';
+    card.innerHTML = `
+      <div class="dismissed-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l3.5 3.5L13 5"/></svg>
+      </div>
+      <div class="dismissed-text">
+        <div class="dismissed-name">${meta.name}</div>
+        <div class="dismissed-date">Dismissed ${today}</div>
+      </div>
+      <span class="dismissed-tag">${meta.label}</span>
+    `;
+    list.appendChild(card);
+  }
+
+  function updateCounts(type, delta) {
+    const el = document.getElementById('count-' + type);
+    if (!el) return;
+    const val = Math.max(0, parseInt(el.textContent) + delta);
+    el.textContent = val;
+  }
+
+  function updateNoAlerts(type) {
+    if (type === 'critical') {
+      // If all critical dismissed, "no critical" placeholder already shown
+      // Recheck if any critical cards are still visible
+      const critCards = document.querySelectorAll('.alert-card.critical');
+      const anyVisible = Array.from(critCards).some(c => c.style.display !== 'none');
+      document.getElementById('no-critical').style.display = anyVisible ? 'none' : '';
+    }
+  }
+</script>
+
+<script src="nav.js"></script>
+</body>
+</html>
