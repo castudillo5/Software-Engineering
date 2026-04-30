@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack – Schedule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-page:#F4F3EF; --bg-surface:#FFFFFF; --bg-muted:#F0EFEB;
+      --text-primary:#1A1916; --text-secondary:#6B6A65; --text-tertiary:#9E9C97;
+      --border:rgba(26,25,22,0.10); --border-med:rgba(26,25,22,0.16);
+      --accent:#2B5CE6; --accent-bg:#EEF2FD;
+      --drop-bg:#FEE2E2; --drop-text:#B91C1C;
+      --cr-bg:#DBEAFE;   --cr-text:#1E40AF;
+      --radius-sm:6px; --radius-lg:14px; --sidebar-w:224px;
+      --shadow-card:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+    }
+    html,body { height:100%; font-family:'DM Sans',sans-serif; background:var(--bg-page); color:var(--text-primary); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+    .layout { display:flex; height:100vh; overflow:hidden; }
+    .sidebar { width:var(--sidebar-w); flex-shrink:0; background:var(--bg-surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; }
+    .sidebar-brand { padding:22px 20px 18px; border-bottom:1px solid var(--border); }
+    .brand-name { font-size:15px; font-weight:600; } .brand-sub { font-size:12px; color:var(--text-tertiary); margin-top:2px; }
+    .nav { padding:10px 0; flex:1; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:14px; color:var(--text-secondary); cursor:pointer; transition:background 0.12s,color 0.12s; user-select:none; }
+    .nav-item:hover { background:var(--bg-muted); color:var(--text-primary); }
+    .nav-item.active { background:var(--bg-muted); color:var(--text-primary); font-weight:500; }
+    .nav-icon { width:16px; height:16px; flex-shrink:0; opacity:0.65; } .nav-item.active .nav-icon { opacity:1; }
+    .nav-badge { margin-left:auto; background:#E5342A; color:#fff; font-size:11px; font-weight:600; border-radius:20px; padding:1px 7px; }
+    .sidebar-user { padding:14px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .user-avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; flex-shrink:0; }
+    .user-name { font-size:13px; font-weight:500; } .user-dept { font-size:11px; color:var(--text-tertiary); }
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .topbar { background:var(--bg-surface); border-bottom:1px solid var(--border); padding:22px 28px 0; flex-shrink:0; }
+    .page-title { font-size:22px; font-weight:600; letter-spacing:-0.4px; }
+    .page-sub   { font-size:13px; color:var(--text-secondary); margin-top:3px; }
+    .tabs { display:flex; margin-top:18px; }
+    .tab { padding:10px 24px 12px; cursor:pointer; text-align:center; border-bottom:2px solid transparent; transition:border-color 0.15s,color 0.15s; user-select:none; }
+    .tab-label { font-size:14px; font-weight:500; color:var(--text-secondary); }
+    .tab-sub   { font-size:12px; color:var(--text-tertiary); margin-top:1px; }
+    .tab.active .tab-label, .tab.active .tab-sub { color:var(--accent); }
+    .tab.active { border-bottom-color:var(--accent); }
+    .tab:hover .tab-label { color:var(--text-primary); }
+    .content { flex:1; overflow-y:auto; padding:24px 28px 40px; }
+    .tab-panel { display:none; } .tab-panel.active { display:block; }
+    .term-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; box-shadow:var(--shadow-card); }
+    .term-name { font-size:16px; font-weight:600; } .term-meta { font-size:13px; color:var(--text-secondary); margin-top:3px; }
+    .term-right { display:flex; align-items:center; gap:12px; }
+    .term-status { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); }
+    .view-btns { display:flex; gap:4px; }
+    .view-btn { width:32px; height:32px; border-radius:var(--radius-sm); border:1px solid var(--border-med); background:var(--bg-surface); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); transition:background 0.12s; }
+    .view-btn:hover { background:var(--bg-muted); }
+    .view-btn.active { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+    .course-grid, .history-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .course-card, .history-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px 18px 16px; box-shadow:var(--shadow-card); }
+    .card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
+    .card-code { font-size:15px; font-weight:600; font-family:'DM Mono',monospace; }
+    .card-name { font-size:14px; color:var(--text-secondary); margin-top:2px; }
+    .card-badges { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+    .cr-badge { background:var(--cr-bg); color:var(--cr-text); font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px; }
+    .grade-badge { background:#DCFCE7; color:#166534; font-size:12px; font-weight:600; padding:3px 10px; border-radius:20px; }
+    .drop-btn { background:var(--drop-bg); color:var(--drop-text); font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; }
+    .drop-btn:hover { opacity:0.8; }
+    .card-details { display:flex; flex-direction:column; gap:6px; }
+    .card-detail { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); }
+    .card-detail svg { flex-shrink:0; opacity:0.55; }
+    /* Calendar */
+    .cal-wrap { overflow-x:auto; }
+    .cal-table { width:100%; border-collapse:collapse; min-width:600px; }
+    .cal-table th { font-size:13px; font-weight:600; padding:10px 8px; border:1px solid var(--border); background:var(--bg-surface); text-align:center; }
+    .cal-table th:first-child { width:76px; }
+    .cal-table td { border:1px solid var(--border); vertical-align:top; background:var(--bg-surface); height:50px; position:relative; }
+    .cal-table td:first-child { font-size:12px; color:var(--text-tertiary); padding:6px 10px 0 6px; text-align:right; white-space:nowrap; background:var(--bg-surface); }
+    .cal-event { position:absolute; left:3px; right:3px; border-radius:5px; padding:4px 6px; font-size:11px; overflow:hidden; border-left:3px solid; }
+    .cal-event-code { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cal-event-name,.cal-event-room { opacity:0.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+    .ev-blue   { background:#EFF6FF; border-left-color:#3B82F6; color:#1E40AF; }
+    .ev-purple { background:#F5F3FF; border-left-color:#8B5CF6; color:#5B21B6; }
+    .ev-teal   { background:#F0FDFA; border-left-color:#14B8A6; color:#0F766E; }
+    .ev-amber  { background:#FFFBEB; border-left-color:#F59E0B; color:#92400E; }
+    .ev-green  { background:#F0FDF4; border-left-color:#22C55E; color:#166534; }
+    /* Confirm modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .modal-overlay.hidden { display:none; }
+    .modal { background:var(--bg-surface); border-radius:var(--radius-lg); padding:28px 28px 22px; max-width:380px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
+    .modal-title { font-size:16px; font-weight:600; margin-bottom:8px; }
+    .modal-body  { font-size:14px; color:var(--text-secondary); margin-bottom:22px; line-height:1.6; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+    .modal-btn { height:34px; padding:0 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; border:1px solid var(--border-med); background:var(--bg-surface); color:var(--text-primary); transition:background 0.12s; }
+    .modal-btn:hover { background:var(--bg-muted); }
+    .modal-btn.confirm-drop { background:#DC2626; color:#fff; border-color:#DC2626; }
+    .modal-btn.confirm-drop:hover { background:#B91C1C; }
+    /* Empty */
+    .empty-msg { padding:28px; text-align:center; color:var(--text-tertiary); font-size:13px; }
+    .help-btn { position:fixed; bottom:24px; right:24px; width:36px; height:36px; border-radius:50%; background:var(--bg-surface); border:1px solid var(--border-med); box-shadow:0 2px 8px rgba(0,0,0,0.10); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); font-size:15px; font-weight:600; }
+    .help-btn:hover { background:var(--accent); color:#fff; }
+    ::-webkit-scrollbar{width:6px;height:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">UniTrack</div>
+      <div class="brand-sub">Degree Progress System</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M5 8h6M5 11h4"/></svg>Home
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>Schedule
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4.5h12M2 8h8M2 11.5h5"/></svg>Registration
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/><path d="M8 12v2"/><path d="M6 13.5h4"/></svg>Alerts
+        <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">—</div>
+      <div>
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-dept" id="user-dept"></div>
+      </div>
+    </div>
+  </nav>
+ 
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title">Course Schedule</div>
+      <div class="page-sub">View your current, past, and planned future courses</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('current')">
+          <div class="tab-label">Current Schedule</div>
+          <div class="tab-sub" id="tab-sub-current">—</div>
+        </div>
+        <div class="tab" onclick="switchTab('future')">
+          <div class="tab-label">Future Schedule</div>
+          <div class="tab-sub" id="tab-sub-future">—</div>
+        </div>
+        <div class="tab" onclick="switchTab('history')">
+          <div class="tab-label">Course History</div>
+          <div class="tab-sub">All Completed Courses</div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="content">
+      <!-- Current -->
+      <div class="tab-panel active" id="panel-current">
+        <div class="term-card">
+          <div>
+            <div class="term-name" id="cur-term-name">—</div>
+            <div class="term-meta" id="cur-term-meta">Loading…</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>In Progress
+            </div>
+            <div class="view-btns">
+              <button class="view-btn active" id="cur-grid-btn" onclick="setView('cur','grid')" title="Card view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="view-btn" id="cur-cal-btn" onclick="setView('cur','cal')" title="Calendar view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h12M1 3h14v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/><path d="M5 8h2M9 8h2M5 11h2M9 11h2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="cur-grid" class="course-grid"></div>
+        <div id="cur-cal"  style="display:none"><div class="cal-wrap"><table class="cal-table" id="cur-cal-table"></table></div></div>
+      </div>
+ 
+      <!-- Future -->
+      <div class="tab-panel" id="panel-future">
+        <div class="term-card">
+          <div>
+            <div class="term-name" id="fut-term-name">—</div>
+            <div class="term-meta" id="fut-term-meta">Loading…</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>Planned
+            </div>
+            <div class="view-btns">
+              <button class="view-btn active" id="fut-grid-btn" onclick="setView('fut','grid')" title="Card view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="view-btn" id="fut-cal-btn" onclick="setView('fut','cal')" title="Calendar view">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h12M1 3h14v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/><path d="M5 8h2M9 8h2M5 11h2M9 11h2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="fut-grid" class="course-grid"></div>
+        <div id="fut-cal"  style="display:none"><div class="cal-wrap"><table class="cal-table" id="fut-cal-table"></table></div></div>
+      </div>
+ 
+      <!-- History -->
+      <div class="tab-panel" id="panel-history">
+        <div class="term-card">
+          <div>
+            <div class="term-name">All Completed Courses</div>
+            <div class="term-meta" id="hist-term-meta">Loading…</div>
+          </div>
+          <div class="term-right">
+            <div class="term-status">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>Completed
+            </div>
+          </div>
+        </div>
+        <div id="hist-grid" class="history-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Drop confirmation modal -->
+<div class="modal-overlay hidden" id="drop-modal">
+  <div class="modal">
+    <div class="modal-title">Drop Course?</div>
+    <div class="modal-body" id="drop-modal-body">Are you sure you want to drop this course? This action will be sent to the server.</div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeDropModal()">Cancel</button>
+      <button class="modal-btn confirm-drop" id="drop-confirm-btn">Drop Course</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="help-btn" title="Help">?</div>
+ 
+<script src="api.js"></script>
+<script src="nav.js"></script>
+<script>
+  const EV_COLORS = ['ev-blue','ev-purple','ev-teal','ev-amber','ev-green'];
+  const DAYS_ALL  = ['Mon','Tue','Wed','Thu','Fri'];
+  const SLOT_H    = 50;
+ 
+  // Pending drop state
+  let _pendingDropCode = null;
+  let _pendingDropCard = null;
+ 
+  // ── Tab switching ────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach((t,i) => {
+      t.classList.toggle('active', ['current','future','history'][i] === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+ 
+  // ── Grid / Calendar toggle ───────────────────────────────────────────
+  function setView(prefix, mode) {
+    document.getElementById(prefix + '-grid').style.display = mode === 'grid' ? '' : 'none';
+    document.getElementById(prefix + '-cal').style.display  = mode === 'cal'  ? '' : 'none';
+    document.getElementById(prefix + '-grid-btn').classList.toggle('active', mode === 'grid');
+    document.getElementById(prefix + '-cal-btn').classList.toggle('active',  mode === 'cal');
+    if (mode === 'cal') buildCalendar(prefix);
+  }
+ 
+  // ── Drop modal ───────────────────────────────────────────────────────
+  function openDropModal(courseCode, courseName, cardEl) {
+    _pendingDropCode = courseCode;
+    _pendingDropCard = cardEl;
+    document.getElementById('drop-modal-body').textContent =
+      `Are you sure you want to drop ${courseName || courseCode}? This will remove it from your schedule.`;
+    document.getElementById('drop-modal').classList.remove('hidden');
+  }
+ 
+  function closeDropModal() {
+    _pendingDropCode = null;
+    _pendingDropCard = null;
+    document.getElementById('drop-modal').classList.add('hidden');
+  }
+ 
+  document.getElementById('drop-confirm-btn').addEventListener('click', async () => {
+    if (!_pendingDropCode) return;
+    const code = _pendingDropCode;
+    const card = _pendingDropCard;
+    closeDropModal();
+ 
+    const result = await API.deleteRecord(code);
+    if (result) {
+      if (card) {
+        card.style.transition = 'opacity 0.25s,transform 0.25s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-4px)';
+        setTimeout(() => { card.remove(); refreshTermMeta(); }, 260);
+      }
+    } else {
+      alert('Failed to drop course. Please try again.');
+    }
+  });
+ 
+  function refreshTermMeta() {
+    const curCards = document.querySelectorAll('#cur-grid .course-card');
+    const futCards = document.querySelectorAll('#fut-grid .course-card');
+    document.getElementById('cur-term-meta').textContent =
+      `${curCards.length} course${curCards.length !== 1 ? 's' : ''}`;
+    document.getElementById('fut-term-meta').textContent =
+      `${futCards.length} course${futCards.length !== 1 ? 's' : ''}`;
+  }
+ 
+  // ── Build a course card ──────────────────────────────────────────────
+  function makeCard(record, showDrop, containerEl) {
+    const course     = record.course  || record;
+    const code       = record.courseCode || course.courseCode || course.code || '';
+    const name       = course.name    || record.courseName || '';
+    const credits    = record.creditHours || course.creditHours || course.credits || 3;
+    const instructor = course.instructor  || record.instructor  || '';
+    const schedule   = course.schedule   || record.schedule    || course.time || '';
+    const room       = course.room       || record.room        || course.location || '';
+    const grade      = record.grade || '';
+ 
+    const card = document.createElement('div');
+    card.className = showDrop ? 'course-card' : 'history-card';
+    card.dataset.courseCode = code;
+ 
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="card-code">${code}</div>
+          <div class="card-name">${name}</div>
+        </div>
+        <div class="card-badges">
+          <span class="cr-badge">${credits} CR</span>
+          ${grade ? `<span class="grade-badge">${grade}</span>` : ''}
+          ${showDrop ? `<button class="drop-btn">Drop</button>` : ''}
+        </div>
+      </div>
+      <div class="card-details">
+        ${instructor ? `<div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>${instructor}</div>` : ''}
+        ${schedule   ? `<div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>${schedule}</div>` : ''}
+        ${room       ? `<div class="card-detail"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1C5.24 1 3 3.24 3 6c0 4 5 9 5 9s5-5 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>${room}</div>` : ''}
+      </div>`;
+ 
+    if (showDrop) {
+      card.querySelector('.drop-btn').addEventListener('click', () => {
+        openDropModal(code, name, card);
+      });
+    }
+ 
+    containerEl.appendChild(card);
+  }
+ 
+  // ── Render grid of records ───────────────────────────────────────────
+  function renderGrid(containerId, records, showDrop) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = '';
+    if (!records || records.length === 0) {
+      el.innerHTML = '<div class="empty-msg" style="grid-column:1/-1">No courses in this category yet.</div>';
+      return;
+    }
+    records.forEach(r => makeCard(r, showDrop, el));
+  }
+ 
+  // ── Calendar builder ─────────────────────────────────────────────────
+  function timeToMin(str) {
+    const m = str.trim().match(/(\d{1,2}):(\d{2})\s*([AP]M)/i);
+    if (!m) return 0;
+    let h = parseInt(m[1]); const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+ 
+  function parseEvent(record, colorClass) {
+    const course   = record.course || record;
+    const schedule = course.schedule || record.schedule || '';
+    if (!schedule) return null;
+    const code = record.courseCode || course.courseCode || '';
+    const name = course.name || '';
+    const room = course.room || '';
+ 
+    const dayMatch  = schedule.match(/^([MTWRFmtwrf]+)/);
+    if (!dayMatch) return null;
+    const dayStr = dayMatch[1].toUpperCase();
+    const days   = [];
+    if (dayStr.includes('TH') || dayStr.includes('TR') || dayStr.includes('R')) {
+      if (dayStr.includes('T') && !dayStr.includes('TH')) days.push('Tue');
+      if (dayStr.includes('TH') || dayStr.includes('R')) days.push('Thu');
+      if (dayStr.includes('TH') && dayStr.includes('T') && dayStr.indexOf('T') !== dayStr.indexOf('TH')) days.push('Tue');
+    } else {
+      for (const ch of dayStr) {
+        if (ch === 'M') days.push('Mon');
+        else if (ch === 'T') days.push('Tue');
+        else if (ch === 'W') days.push('Wed');
+        else if (ch === 'R') days.push('Thu');
+        else if (ch === 'F') days.push('Fri');
+      }
+    }
+    if (days.length === 0) return null;
+    const timeMatch = schedule.match(/(\d{1,2}:\d{2}\s*[AP]M)\s*[-–]\s*(\d{1,2}:\d{2}\s*[AP]M)/i);
+    if (!timeMatch) return null;
+    return { code, name, room, days, startMin:timeToMin(timeMatch[1]), endMin:timeToMin(timeMatch[2]), color:colorClass };
+  }
+ 
+  function buildCalendar(prefix) {
+    const tableId = prefix + '-cal-table';
+    const table   = document.getElementById(tableId);
+    if (!table || table.innerHTML !== '') return;
+    const records = window._scheduleData ? window._scheduleData[prefix] : [];
+    if (!records || records.length === 0) {
+      table.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-tertiary);font-size:13px">No scheduled courses to display.</td></tr>';
+      return;
+    }
+    const events = records.map((r,i) => parseEvent(r, EV_COLORS[i % EV_COLORS.length])).filter(Boolean);
+    if (events.length === 0) {
+      table.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-tertiary);font-size:13px">Could not parse schedule times.</td></tr>';
+      return;
+    }
+    const startTimes = events.map(e => e.startMin);
+    const endTimes   = events.map(e => e.endMin);
+    const slotStart  = Math.floor(Math.min(...startTimes, 8*60) / 30) * 30;
+    const slotEnd    = Math.ceil(Math.max(...endTimes, slotStart + 8*60) / 30) * 30;
+    const slots      = [];
+    for (let t = slotStart; t < slotEnd; t += 30) slots.push(t);
+ 
+    const thead = document.createElement('thead');
+    const hrow  = document.createElement('tr');
+    const thE   = document.createElement('th'); thE.textContent = '';
+    hrow.appendChild(thE);
+    DAYS_ALL.forEach(d => { const th = document.createElement('th'); th.textContent = d; hrow.appendChild(th); });
+    thead.appendChild(hrow);
+    table.appendChild(thead);
+ 
+    const tbody = document.createElement('tbody');
+    slots.forEach(slotMin => {
+      const tr = document.createElement('tr');
+      const tdT = document.createElement('td');
+      const h = Math.floor(slotMin/60), m = slotMin%60;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      tdT.textContent = `${h>12?h-12:h}:${m.toString().padStart(2,'0')} ${ampm}`;
+      tr.appendChild(tdT);
+      DAYS_ALL.forEach(day => {
+        const td = document.createElement('td');
+        td.style.height = SLOT_H + 'px';
+        events.forEach(ev => {
+          if (ev.days.includes(day) && ev.startMin === slotMin) {
+            const heightPx = ((ev.endMin - ev.startMin) / 30) * SLOT_H;
+            const el = document.createElement('div');
+            el.className = 'cal-event ' + ev.color;
+            el.style.top    = '2px';
+            el.style.height = (heightPx - 4) + 'px';
+            el.style.zIndex = '2';
+            el.innerHTML = `<div class="cal-event-code">${ev.code}</div><div class="cal-event-name">${ev.name}</div><div class="cal-event-room">${ev.room}</div>`;
+            td.appendChild(el);
+          }
+        });
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
+ 
+  // ── Load all schedule data ───────────────────────────────────────────
+  async function loadSchedule() {
+    const student = await API.getStudent();
+    if (!student) return;
+ 
+    const name     = student.name  || '—';
+    const major    = student.major || '—';
+    const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '—';
+    document.getElementById('user-name').textContent   = name;
+    document.getElementById('user-dept').textContent   = major;
+    document.getElementById('user-avatar').textContent = initials;
+ 
+    const alerts = await API.getAlerts();
+    if (alerts && alerts.length > 0) {
+      const b = document.getElementById('alert-badge');
+      b.textContent = alerts.length; b.style.display = '';
+    }
+ 
+    const records = student.records || student.academicRecords || [];
+ 
+    // Split into buckets
+    const current   = records.filter(r => !r.completed && r.completed !== 'true' && r.grade && r.grade !== '');
+    const planned   = records.filter(r => !r.completed && r.completed !== 'true' && (!r.grade || r.grade === ''));
+    const completed = records.filter(r => r.completed === true || r.completed === 'true');
+ 
+    // Store for calendar
+    window._scheduleData = { cur: current, fut: planned };
+ 
+    // Current term name from first record semester
+    const curSemester = current.length  > 0 ? (current[0].semester  || 'Current Term') : 'Current Term';
+    const futSemester = planned.length  > 0 ? (planned[0].semester  || 'Upcoming Term') : 'Upcoming Term';
+    const curCredits  = current.reduce((s,r) => s + parseInt(r.creditHours || r.credits || 3), 0);
+    const futCredits  = planned.reduce((s,r) => s + parseInt(r.creditHours || r.credits || 3), 0);
+    const histCredits = completed.reduce((s,r) => s + parseInt(r.creditHours || r.credits || 3), 0);
+ 
+    document.getElementById('cur-term-name').textContent = curSemester;
+    document.getElementById('cur-term-meta').textContent = `${current.length} course${current.length!==1?'s':''} \u2022 ${curCredits} total credits`;
+    document.getElementById('tab-sub-current').textContent = curSemester;
+ 
+    document.getElementById('fut-term-name').textContent = futSemester;
+    document.getElementById('fut-term-meta').textContent = `${planned.length} course${planned.length!==1?'s':''} \u2022 ${futCredits} total credits`;
+    document.getElementById('tab-sub-future').textContent = futSemester;
+ 
+    document.getElementById('hist-term-meta').textContent = `${completed.length} courses \u2022 ${histCredits} total credits`;
+ 
+    renderGrid('cur-grid',  current,   true);
+    renderGrid('fut-grid',  planned,   true);
+    renderGrid('hist-grid', completed, false);
+  }
+ 
+  loadSchedule();
+</script>
+</body>
+</html>

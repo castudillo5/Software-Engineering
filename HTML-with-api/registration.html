@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack – Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-page:#F4F3EF; --bg-surface:#FFFFFF; --bg-muted:#F0EFEB;
+      --text-primary:#1A1916; --text-secondary:#6B6A65; --text-tertiary:#9E9C97;
+      --border:rgba(26,25,22,0.10); --border-med:rgba(26,25,22,0.16);
+      --accent:#2B5CE6; --accent-bg:#EEF2FD; --accent-text:#1A3DA3;
+      --radius-sm:6px; --radius-lg:14px; --sidebar-w:224px;
+      --shadow-card:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+    }
+    html,body { height:100%; font-family:'DM Sans',sans-serif; background:var(--bg-page); color:var(--text-primary); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+    .layout { display:flex; height:100vh; overflow:hidden; }
+    .sidebar { width:var(--sidebar-w); flex-shrink:0; background:var(--bg-surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; }
+    .sidebar-brand { padding:22px 20px 18px; border-bottom:1px solid var(--border); }
+    .brand-name { font-size:15px; font-weight:600; } .brand-sub { font-size:12px; color:var(--text-tertiary); margin-top:2px; }
+    .nav { padding:10px 0; flex:1; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:14px; color:var(--text-secondary); cursor:pointer; transition:background 0.12s,color 0.12s; user-select:none; }
+    .nav-item:hover { background:var(--bg-muted); color:var(--text-primary); }
+    .nav-item.active { background:var(--bg-muted); color:var(--text-primary); font-weight:500; }
+    .nav-icon { width:16px; height:16px; flex-shrink:0; opacity:0.65; } .nav-item.active .nav-icon { opacity:1; }
+    .nav-badge { margin-left:auto; background:#E5342A; color:#fff; font-size:11px; font-weight:600; border-radius:20px; padding:1px 7px; }
+    .sidebar-user { padding:14px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .user-avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; flex-shrink:0; }
+    .user-name { font-size:13px; font-weight:500; } .user-dept { font-size:11px; color:var(--text-tertiary); }
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .topbar { background:var(--bg-surface); border-bottom:1px solid var(--border); padding:22px 28px 18px; flex-shrink:0; }
+    .page-title { font-size:22px; font-weight:600; letter-spacing:-0.4px; }
+    .page-sub   { font-size:13px; color:var(--text-secondary); margin-top:3px; }
+    .filters-row { display:flex; align-items:center; gap:10px; margin-top:16px; }
+    .filter-label { font-size:13px; color:var(--text-secondary); flex-shrink:0; }
+    .term-select { height:34px; padding:0 10px; border:1px solid var(--border-med); border-radius:var(--radius-sm); background:var(--bg-surface); color:var(--text-primary); font-size:13px; font-family:'DM Sans',sans-serif; outline:none; cursor:pointer; }
+    .search-wrap { position:relative; flex:1; max-width:320px; }
+    .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-tertiary); pointer-events:none; }
+    .search-input { width:100%; height:34px; padding:0 12px 0 32px; border:1px solid var(--border-med); border-radius:var(--radius-sm); background:var(--bg-surface); color:var(--text-primary); font-size:13px; font-family:'DM Sans',sans-serif; outline:none; }
+    .search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(43,92,230,0.12); }
+    .content { flex:1; overflow-y:auto; padding:24px 28px 40px; }
+    .count-text { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+    .section-head { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .section-title { font-size:15px; font-weight:600; }
+    .rec-badge { background:var(--accent-bg); color:var(--accent-text); font-size:12px; font-weight:500; padding:3px 10px; border-radius:20px; }
+    /* Course blocks */
+    .course-block { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:12px; overflow:hidden; box-shadow:var(--shadow-card); }
+    .course-header { padding:14px 18px; border-bottom:1px solid var(--border); }
+    .course-title-row { display:flex; align-items:center; gap:9px; margin-bottom:5px; }
+    .course-code { font-size:14px; font-weight:600; font-family:'DM Mono',monospace; }
+    .credit-pill { background:var(--bg-muted); color:var(--text-secondary); font-size:12px; padding:2px 9px; border-radius:20px; border:1px solid var(--border); }
+    .course-name { font-size:14px; font-weight:500; margin-bottom:3px; }
+    .prereq { font-size:12px; color:var(--text-tertiary); }
+    .section-row { display:flex; align-items:center; padding:13px 18px; border-bottom:1px solid var(--border); gap:12px; flex-wrap:wrap; }
+    .section-row:last-child { border-bottom:none; }
+    .sec-left { display:flex; align-items:center; gap:8px; flex:0 0 160px; }
+    .sec-num  { font-size:13px; font-weight:500; }
+    .sec-details { display:flex; flex:1; flex-wrap:wrap; }
+    .sec-detail { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); min-width:170px; padding:2px 0; }
+    .sec-detail svg { flex-shrink:0; opacity:0.55; }
+    .select-btn { margin-left:auto; flex-shrink:0; height:30px; padding:0 16px; border:1px solid var(--border-med); border-radius:var(--radius-sm); background:var(--bg-surface); color:var(--text-primary); font-size:13px; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:background 0.12s; }
+    .select-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .select-btn:disabled { background:#DCFCE7; color:#166534; border-color:#BBF7D0; cursor:default; }
+    /* Dept accordion */
+    .all-section { margin-top:32px; }
+    .all-title { font-size:15px; font-weight:600; margin-bottom:12px; }
+    .dept-block { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:8px; overflow:hidden; box-shadow:var(--shadow-card); }
+    .dept-row { display:flex; align-items:center; gap:10px; padding:14px 18px; cursor:pointer; transition:background 0.12s; user-select:none; }
+    .dept-row:hover { background:var(--bg-muted); }
+    .dept-arrow { width:14px; height:14px; color:var(--text-tertiary); flex-shrink:0; transition:transform 0.2s; }
+    .dept-arrow.open { transform:rotate(90deg); }
+    .dept-name  { font-size:14px; font-weight:600; }
+    .dept-count { background:var(--bg-muted); color:var(--text-secondary); font-size:12px; padding:2px 9px; border-radius:20px; border:1px solid var(--border); }
+    .dept-courses { border-top:1px solid var(--border); display:none; }
+    .dept-courses.open { display:block; }
+    .dept-course-hdr { padding:12px 18px; border-bottom:1px solid var(--border); background:var(--bg-page); }
+    /* Confirm modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .modal-overlay.hidden { display:none; }
+    .modal { background:var(--bg-surface); border-radius:var(--radius-lg); padding:28px 28px 22px; max-width:400px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
+    .modal-title { font-size:16px; font-weight:600; margin-bottom:8px; }
+    .modal-body  { font-size:14px; color:var(--text-secondary); margin-bottom:22px; line-height:1.6; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+    .modal-btn { height:34px; padding:0 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; border:1px solid var(--border-med); background:var(--bg-surface); color:var(--text-primary); transition:background 0.12s; }
+    .modal-btn:hover { background:var(--bg-muted); }
+    .modal-btn.confirm-add { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .modal-btn.confirm-add:hover { background:#1a3da3; }
+    /* Loading / empty */
+    .loading-msg { padding:28px; text-align:center; color:var(--text-tertiary); font-size:13px; }
+    .empty-msg   { padding:20px 18px; font-size:13px; color:var(--text-tertiary); }
+    .help-btn { position:fixed; bottom:24px; right:24px; width:36px; height:36px; border-radius:50%; background:var(--bg-surface); border:1px solid var(--border-med); box-shadow:0 2px 8px rgba(0,0,0,0.10); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); font-size:15px; font-weight:600; }
+    .help-btn:hover { background:var(--accent); color:#fff; }
+    ::-webkit-scrollbar{width:6px;height:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">UniTrack</div>
+      <div class="brand-sub">Degree Progress System</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M5 8h6M5 11h4"/></svg>Home
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>Schedule
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4.5h12M2 8h8M2 11.5h5"/></svg>Registration
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/><path d="M8 12v2"/><path d="M6 13.5h4"/></svg>Alerts
+        <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">—</div>
+      <div>
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-dept" id="user-dept"></div>
+      </div>
+    </div>
+  </nav>
+ 
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title">Course Registration</div>
+      <div class="page-sub">Browse and register for upcoming courses</div>
+      <div class="filters-row">
+        <span class="filter-label">Term:</span>
+        <select class="term-select" id="term-select">
+          <option>Fall 2026</option>
+          <option>Spring 2026</option>
+          <option>Summer 2026</option>
+        </select>
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+          <input class="search-input" id="search-input" type="text" placeholder="Search courses, instructors…" />
+        </div>
+      </div>
+    </div>
+ 
+    <div class="content">
+      <div class="count-text" id="count-text">Loading courses…</div>
+ 
+      <!-- Recommended -->
+      <div class="section-head">
+        <span class="section-title">Recommended for You</span>
+        <span class="rec-badge">Based on your degree progress</span>
+      </div>
+      <div id="rec-section">
+        <div class="loading-msg">Loading…</div>
+      </div>
+ 
+      <!-- All Courses -->
+      <div class="all-section">
+        <div class="all-title">All Courses</div>
+        <div id="all-depts">
+          <div class="loading-msg">Loading course catalog…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Add course confirmation modal -->
+<div class="modal-overlay hidden" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Confirm Registration</div>
+    <div class="modal-body" id="add-modal-body">Are you sure you want to register for this course?</div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeAddModal()">Cancel</button>
+      <button class="modal-btn confirm-add" id="add-confirm-btn">Confirm &amp; Register</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="help-btn" title="Help">?</div>
+ 
+<script src="api.js"></script>
+<script src="nav.js"></script>
+<script>
+  const ICONS = {
+    time:   `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>`,
+    room:   `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1"/><path d="M5 3V1M11 3V1"/></svg>`,
+    person: `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>`,
+  };
+ 
+  let _allCourses    = [];
+  let _enrolledCodes = new Set();
+  let _pendingAdd    = null; // { code, name, btnEl }
+ 
+  // ── Add modal ─────────────────────────────────────────────────────────
+  function openAddModal(code, name, btnEl) {
+    _pendingAdd = { code, name, btnEl };
+    document.getElementById('add-modal-body').textContent =
+      `Register for ${name || code} (${code})? This will add it to your planned schedule.`;
+    document.getElementById('add-modal').classList.remove('hidden');
+  }
+ 
+  function closeAddModal() {
+    _pendingAdd = null;
+    document.getElementById('add-modal').classList.add('hidden');
+  }
+ 
+  document.getElementById('add-confirm-btn').addEventListener('click', async () => {
+    if (!_pendingAdd) return;
+    const { code, name, btnEl } = _pendingAdd;
+    closeAddModal();
+ 
+    const term = document.getElementById('term-select').value;
+    const result = await API.addRecord(code, '', term, false);
+    if (result) {
+      _enrolledCodes.add(code);
+      // Mark all select buttons for this course as enrolled
+      document.querySelectorAll(`.select-btn[data-code="${code}"]`).forEach(b => {
+        b.textContent = 'Enrolled ✓';
+        b.disabled = true;
+        b.style.background    = '#DCFCE7';
+        b.style.color         = '#166534';
+        b.style.borderColor   = '#BBF7D0';
+      });
+    } else {
+      alert(`Failed to register for ${code}. Please try again.`);
+    }
+  });
+ 
+  // ── Build section row HTML ────────────────────────────────────────────
+  function buildSectionRow(course, sectionLabel) {
+    const code       = course.courseCode || course.code || '';
+    const name       = course.name || '';
+    const schedule   = course.schedule   || course.time       || '';
+    const room       = course.room       || course.location   || '';
+    const instructor = course.instructor || '';
+    const enrolled   = _enrolledCodes.has(code);
+ 
+    return `
+      <div class="section-row">
+        <div class="sec-left"><span class="sec-num">${sectionLabel}</span></div>
+        <div class="sec-details">
+          ${schedule   ? `<div class="sec-detail">${ICONS.time}${schedule}</div>`   : ''}
+          ${room       ? `<div class="sec-detail">${ICONS.room}${room}</div>`       : ''}
+          ${instructor ? `<div class="sec-detail">${ICONS.person}${instructor}</div>` : ''}
+        </div>
+        <button class="select-btn" data-code="${code}"
+          ${enrolled ? 'disabled style="background:#DCFCE7;color:#166534;border-color:#BBF7D0"' : ''}
+          onclick="openAddModal('${code}','${name.replace(/'/g,"\\'")}', this)">
+          ${enrolled ? 'Enrolled ✓' : 'Select'}
+        </button>
+      </div>`;
+  }
+ 
+  // ── Build a course block element ──────────────────────────────────────
+  function buildCourseBlock(course) {
+    const code    = course.courseCode || course.code || '';
+    const name    = course.name || '';
+    const credits = course.credits || course.creditHours || 3;
+    const prereqs = course.prerequisites || course.prereqs || '';
+    const sections = course.sections || [course]; // support multi-section or single
+ 
+    const sectionsHtml = sections.map((sec, i) =>
+      buildSectionRow(sec.courseCode ? sec : { ...course, ...sec }, `Section ${String(i+1).padStart(3,'0')}`)
+    ).join('');
+ 
+    const block = document.createElement('div');
+    block.className = 'course-block';
+    block.dataset.code = code;
+    block.dataset.name = name.toLowerCase();
+    block.innerHTML = `
+      <div class="course-header">
+        <div class="course-title-row">
+          <span class="course-code">${code}</span>
+          <span class="credit-pill">${credits} Credits</span>
+        </div>
+        <div class="course-name">${name}</div>
+        ${prereqs ? `<div class="prereq">Prerequisites: ${prereqs}</div>` : ''}
+      </div>
+      ${sectionsHtml}`;
+    return block;
+  }
+ 
+  // ── Toggle dept accordion ─────────────────────────────────────────────
+  function toggleDept(row) {
+    const arrow   = row.querySelector('.dept-arrow');
+    const courses = row.nextElementSibling;
+    arrow.classList.toggle('open', !courses.classList.contains('open'));
+    courses.classList.toggle('open');
+  }
+ 
+  // ── Search filter ─────────────────────────────────────────────────────
+  document.getElementById('search-input').addEventListener('input', function () {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.course-block').forEach(block => {
+      const code = (block.dataset.code || '').toLowerCase();
+      const name = (block.dataset.name || '').toLowerCase();
+      block.style.display = (!q || code.includes(q) || name.includes(q)) ? '' : 'none';
+    });
+    // Show/hide dept blocks if all their courses are hidden
+    document.querySelectorAll('.dept-block').forEach(dept => {
+      const visible = Array.from(dept.querySelectorAll('.course-block')).some(b => b.style.display !== 'none');
+      dept.style.display = visible ? '' : 'none';
+    });
+  });
+ 
+  // ── Main load ─────────────────────────────────────────────────────────
+  async function loadRegistration() {
+    // Student info for sidebar
+    const student = await API.getStudent();
+    if (student) {
+      const name = student.name || '—';
+      const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('user-name').textContent   = name;
+      document.getElementById('user-dept').textContent   = student.major || '';
+      document.getElementById('user-avatar').textContent = initials;
+      // Track already-enrolled courses
+      const records = student.records || student.academicRecords || [];
+      records.forEach(r => {
+        const code = r.courseCode || (r.course && r.course.courseCode) || '';
+        if (code) _enrolledCodes.add(code);
+      });
+    }
+ 
+    // Alert badge
+    const alerts = await API.getAlerts();
+    if (alerts && alerts.length > 0) {
+      const b = document.getElementById('alert-badge');
+      b.textContent = alerts.length; b.style.display = '';
+    }
+ 
+    // Course catalog
+    const courses = await API.getCourses();
+    const recSection = document.getElementById('rec-section');
+    const allDepts   = document.getElementById('all-depts');
+    recSection.innerHTML = '';
+    allDepts.innerHTML   = '';
+ 
+    if (!courses || courses.length === 0) {
+      recSection.innerHTML = '<div class="empty-msg">No courses available at this time.</div>';
+      allDepts.innerHTML   = '<div class="empty-msg">No courses found in catalog.</div>';
+      document.getElementById('count-text').textContent = 'No courses found.';
+      return;
+    }
+ 
+    _allCourses = courses;
+    const term  = document.getElementById('term-select').value;
+    document.getElementById('count-text').textContent =
+      `Showing ${courses.length} courses for ${term}`;
+ 
+    // ── Recommended: first 2 from catalog ──────────────────────────────
+    const recommended = courses.slice(0, 2);
+    if (recommended.length === 0) {
+      recSection.innerHTML = '<div class="empty-msg">No recommendations available.</div>';
+    } else {
+      recommended.forEach(c => recSection.appendChild(buildCourseBlock(c)));
+    }
+ 
+    // ── All courses grouped by dept prefix ──────────────────────────────
+    const deptMap = {};
+    courses.forEach(c => {
+      const dept = (c.courseCode || c.code || '').split(/\d/)[0].trim().toUpperCase() || 'OTHER';
+      if (!deptMap[dept]) deptMap[dept] = [];
+      deptMap[dept].push(c);
+    });
+ 
+    const DEPT_LABELS = {
+      CS:'CS – Computer Science', MATH:'MATH – Mathematics',
+      ENGL:'ENGL – English', HIST:'HIST – History',
+      PHYS:'PHYS – Physics', BIOL:'BIOL – Biology',
+      CMPS:'CMPS – Computer Science',
+    };
+ 
+    Object.entries(deptMap).sort(([a],[b]) => a.localeCompare(b)).forEach(([dept, deptCourses]) => {
+      const label = DEPT_LABELS[dept] || `${dept}`;
+      const block = document.createElement('div');
+      block.className = 'dept-block';
+ 
+      const coursesContainer = document.createElement('div');
+      coursesContainer.className = 'dept-courses';
+      deptCourses.forEach(c => coursesContainer.appendChild(buildCourseBlock(c)));
+ 
+      block.innerHTML = `
+        <div class="dept-row" onclick="toggleDept(this)">
+          <svg class="dept-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 4l4 4-4 4"/></svg>
+          <span class="dept-name">${label}</span>
+          <span class="dept-count">${deptCourses.length} course${deptCourses.length !== 1 ? 's' : ''}</span>
+        </div>`;
+      block.appendChild(coursesContainer);
+      allDepts.appendChild(block);
+    });
+  }
+ 
+  // Reload when term changes
+  document.getElementById('term-select').addEventListener('change', () => {
+    const term = document.getElementById('term-select').value;
+    document.getElementById('count-text').textContent =
+      `Showing ${_allCourses.length} courses for ${term}`;
+  });
+ 
+  loadRegistration();
+</script>
+</body>
+</html>
