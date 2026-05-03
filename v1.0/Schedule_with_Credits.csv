@@ -1,0 +1,125 @@
+CRN,Subj,Crse,Credits,Title,Days,Begin,End
+11543,BIOL,1013,3,Introduction to Human Biology,MW,0100pm,0150pm
+11567,BIOL,1013,3,Introduction to Human Biology,,,
+11569,BIOL,1013,3,Intro to Human Biology Lab,,,
+12339,BIOL,1114,4,Life I:Mol & Cell Concepts Lab,R,0100pm,0250pm
+13584,BIOL,1114,4,Life I:Mol&Cell Conc-Honors,W,0100pm,0250pm
+10878,BIOL,1214,4,Life II: Evolution & Ecology,TR,0930am,1050am
+10882,BIOL,1214,4,Life II: Evo & Eco Lab,T,0100pm,0250pm
+14213,BIOL,1214,4,LifeII:Evolution & Ecology-Lab,T,0330pm,0520pm
+13911,CHEM,1141,1,General Chemistry I Lab,T,0100pm,0450pm
+13912,CHEM,1141,1,General Chemistry I Lab,W,0100pm,0450pm
+13913,CHEM,1141,1,General Chemistry I Lab,R,0100pm,0450pm
+13914,CHEM,1141,1,General Chemistry I Lab,T,0500pm,0850pm
+11114,CHEM,1143,3,General Chemistry I,MWF,1100am,1150am
+11117,CHEM,1143,3,General Chemistry I,TR,0930am,1050am
+12453,CHEM,1143,3,General Chemistry I,MWF,0900am,0950am
+13919,CHEM,1241,1,General Chemistry Lab II,M,0100pm,0450pm
+11125,CHEM,1243,3,General Chemistry II,TR,0800am,0920am
+11130,CHEM,1303,3,General-Organic-Biol Chemistry,TR,0800am,0920am
+13921,CHEM,2001,1,Organic Chemistry I Lab,T,0100pm,0450pm
+13922,CHEM,2001,1,Organic Chemistry I Lab,W,0100pm,0450pm
+13924,CHEM,2001,1,Organic Chemistry I Lab,W,0530pm,0920pm
+11149,CHEM,2003,3,Organic Chemistry I,MWF,1100am,1150am
+14600,CHEM,2011,1,Organic Chemistry II Lab,M,0100pm,0450pm
+14601,CHEM,2013,3,Organic Chemistry II,TR,0800am,0920am
+14602,CHEM,3504,4,Intro Environmental Chem,TR,1100am,1220pm
+14603,CHEM,3504,4,Intro Environmental Chem-Lab,W,0100pm,0450pm
+11016,CHEM,4242,2,Biochemistry Laboratory,R,0130pm,0520pm
+11024,CHEM,4243,3,Biochemistry,TR,0930am,1050am
+12674,CMPS,1013,3,Computer Concepts & Applicatns,,,
+12202,CMPS,1023,3,The Digital Culture,MWF,1000am,1050am
+13554,CMPS,1023,3,The Digital Culture,,,
+11401,CMPS,1044,4,Computer Science I,MWF,1100am,1150am
+12061,CMPS,1044,4,Computer Science I,TR,1100am,1220pm
+13895,CMPS,1044,4,Computer Science I-Lab,R,0100pm,0300pm
+14765,CMPS,1044,4,Computer Science I-Lab,F,0100pm,0300pm
+14766,CMPS,1044,4,Computer Science I-Lab,F,0300pm,0500pm
+11412,CMPS,1063,3,Data Structures and ADT,MWF,1100am,1150am
+11416,CMPS,2084,4,Intro Computer Architecture,MWF,1000am,1050am
+11421,CMPS,2084,4,Intr Computer Architecture Lab,W,0100pm,0300pm
+11424,CMPS,2143,3,Object-Oriented Programming,MWF,1100am,1150am
+11425,CMPS,2433,3,Discrete Structures & Analysis,MWF,0900am,0950am
+11428,CMPS,3013,3,Adv Structures & Algorithms,TR,1230pm,0150pm
+14195,CMPS,3023,3,Logic Design,TR,1100am,1220pm
+14340,CMPS,3603,3,Programming for Data Science,,,
+14596,CMPS,3613,3,System Fundamentals,,,
+11430,CMPS,4103,3,Intro Operating Systems,MWF,0900am,0950am
+14599,CMPS,4123,3,Database Managements Systems,TR,0930am,1050am
+14460,CMPS,4143,3,TopContProgLang:Java/Python,MW,0200pm,0320pm
+14750,CMPS,4543,3,TopDataSci:CmptlThink&DataSci,TR,1100am,1220pm
+14597,CMPS,4553,3,TopCMPTSc:CmptlThinkg&DataSci,TR,1100am,1220pm
+14747,CMPS,4663,3,TopCompNtwkSec:Ntwk Security,MWF,1100am,1150am
+11989,CMPS,4773,3,Internship in Computer Science,,,
+14598,CMPS,4883,3,TopinCMPS: Programming Tech,MWF,1200pm,1250pm
+14768,CMPS,4993,3,Ind Study in Computer Science,,,
+11450,CMPS,5113,3,Adv Programming Lang Concepts,TR,1230pm,0150pm
+11452,CMPS,5133,3,Adv Computer Architecture,MW,0200pm,0320pm
+13153,CMPS,5143,3,Adv Operating Systems,TR,0200pm,0320pm
+14595,CMPS,5303,3,Adv Database Mgmt Systems,MW,0400pm,0520pm
+14593,CMPS,5383,3,GradTopics: Adv OOP,TR,0330pm,0450pm
+14594,CMPS,5433,3,GradTopParall&DistribSys: GPUs,MW,0100pm,0220pm
+14201,CMPS,5993,3,Ind Grad Study in Computer Sci,,,
+11017,GEOS,1134,4,Physical Geology,MWF,1000am,1050am
+14248,GEOS,1134,4,Physical Geology,MWF,1000am,1050am
+11020,GEOS,1134,4,Physical Geology Lab,M,0100pm,0250pm
+11022,GEOS,1134,4,Physical Geology Lab,W,0100pm,0250pm
+13071,GEOS,1134,4,Physical Geology-Lab,R,0100pm,0250pm
+14249,GEOS,1134,4,Physical Geology Lab,M,0100pm,0250pm
+14751,GEOS,1134,4,Physical Geology,,,
+14752,GEOS,1134,4,Physical Geology - Lab,,,
+11026,GEOS,1234,4,Historical Geology,MWF,1100am,1150am
+11029,GEOS,1234,4,Historical Geology Lab,T,0100pm,0250pm
+11031,GEOS,1234,4,Historical Geology Lab,W,0100pm,0250pm
+11036,GEOS,1234,4,Historical Geology Lab,R,0300pm,0450pm
+14753,GEOS,1234,4,Historical Geology,,,
+14754,GEOS,1234,4,Historical Geology-Lab,,,
+11038,GEOS,3134,4,Mineralogy,MWF,1100am,1150am
+11039,GEOS,3134,4,Mineralogy Lab,F,0100pm,0250pm
+11331,MATH,1233,3,College Algebra,MWF,0900am,0950am
+11333,MATH,1233,3,College Algebra,MWF,0900am,0950am
+11342,MATH,1233,3,College Algebra,MWF,0900am,0950am
+14642,MATH,1233,3,College Algebra,MWF,0200pm,0250pm
+11328,MATH,1233,3,College Algebra,MWF,1000am,1050am
+11351,MATH,1233,3,College Algebra,MWF,1000am,1050am
+12532,MATH,1233,3,College Algebra,MWF,1100am,1150am
+14182,MATH,1233,3,College Algebra,MWF,0100pm,0150pm
+14183,MATH,1233,3,College Algebra,MWF,0200pm,0250pm
+14643,MATH,1233,3,College Algebra,TR,1100am,1220pm
+14644,MATH,1233,3,College Algebra,TR,1100am,1220pm
+14645,MATH,1233,3,College Algebra,TR,0200pm,0320pm
+11926,MATH,1233,3,College Algebra,MWF,0800am,0850am
+12422,MATH,1233,3,College Algebra,MWF,0900am,0950am
+11357,MATH,1233,3,College Algebra,,,
+14453,MATH,1233,3,College Algebra,,,
+11359,MATH,1433,3,Plane Trigonometry,MWF,1100am,1150am
+11360,MATH,1433,3,Plane Trigonometry,MWF,0100pm,0150pm
+11363,MATH,1433,3,Plane Trigonometry,TR,0930am,1050am
+14184,MATH,1534,4,Precalculus,M,1200pm,1250pm
+14184,MATH,1534,4,Precalculus,TR,1230pm,0150pm
+11367,MATH,1634,4,Calculus I,MF,0800am,0850am
+11367,MATH,1634,4,Calculus I,TR,0800am,0850am
+11370,MATH,1634,4,Calculus I,MF,1200pm,1250pm
+11370,MATH,1634,4,Calculus I,TR,1230pm,0120pm
+11375,MATH,1734,4,Calculus II,MF,1200pm,1250pm
+11375,MATH,1734,4,Calculus II,TR,1230pm,0120pm
+14405,MATH,1734,4,Calculus II,MF,1200pm,1250pm
+14405,MATH,1734,4,Calculus II,TR,1230pm,0120pm
+11382,MATH,2043,3,Structure of Number Sys II,TR,1100am,1220pm
+11392,MATH,2753,3,Linear Algebra,MWF,1000am,1050am
+14647,MATH,4143,3,Mathematical Statistics,MWF,0900am,0950am
+14648,MATH,4453,3,Theory of Numbers,MWF,0100pm,0150pm
+12009,PHYS,1144,4,College Physics I,MWF,0100pm,0150pm
+12010,PHYS,1144,4,General Physics I Lab,T,0300pm,0450pm
+12011,PHYS,1144,4,General Physics I Lab,M,0200pm,0350pm
+14209,PHYS,1244,4,College Physics II Lab,F,0200pm,0350pm
+14208,PHYS,1244,4,College Physics II,,,
+11302,PHYS,1533,3,Descriptive Astronomy,,,
+11304,PHYS,1533,3,Descriptive Astronomy Lab,,,
+11324,PHYS,1624,4,University Physics I,TR,0930am,1050am
+11329,PHYS,1624,4,University Physics I Lab,M,0200pm,0350pm
+11335,PHYS,1624,4,University Physics I Lab,T,0300pm,0450pm
+14210,PHYS,2644,4,University Physics II,TR,1100am,1220pm
+14211,PHYS,2644,4,University Physics II Lab,F,0200pm,0350pm
+11411,STAT,3573,3,Probability & Statistics,TR,0800am,0920am
+11413,STAT,3573,3,Probability & Statistics,TR,0930am,1050am

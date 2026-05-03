@@ -1,0 +1,15 @@
+=== Student Academic Record ===
+Name: Alex Johnson
+Major: Computer Science
+GPA: 3.68182
+Credit Hours: 22
+
+--- Completed Courses ---
+CMPS1044 | Computer Science I | A | 4 | Fall 2024 | Completed
+CMPS1063 | Data Structures and ADT | B | 3 | Spring 2025 | Completed
+MATH1534 | Precalculus | A | 4 | Fall 2024 | Completed
+MATH1634 | Calculus I | B | 4 | Spring 2025 | Completed
+CMPS2143 | Object-Oriented Programming | A | 3 | Spring 2026 | In Progress
+MATH1734 | Calculus II | A | 4 | Spring 2026 | In Progress
+CMPS4883 | TopinCMPS: Programming Tech |  | 3 | Fall 2026 | In Progress
+CMPS4543 | TopDataSci:CmptlThink&DataSci |  | 3 | Fall 2026 | In Progress
