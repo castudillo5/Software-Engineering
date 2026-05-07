@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniTrack – Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-page:#F4F3EF; --bg-surface:#FFFFFF; --bg-muted:#F0EFEB;
+      --text-primary:#1A1916; --text-secondary:#6B6A65; --text-tertiary:#9E9C97;
+      --border:rgba(26,25,22,0.10); --border-med:rgba(26,25,22,0.16);
+      --accent:#2B5CE6; --radius-sm:6px; --radius-lg:14px; --sidebar-w:224px;
+      --shadow-card:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --bar-completed:#22C55E; --bar-inprogress:#3B82F6; --bar-track:#E2E1DC;
+      --cat-orange:#F97316; --cat-blue:#3B82F6; --cat-purple:#A855F7;
+      --cat-green:#22C55E; --cat-teal:#14B8A6;
+    }
+    html,body { height:100%; font-family:'DM Sans',sans-serif; background:var(--bg-page); color:var(--text-primary); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+    .layout { display:flex; height:100vh; overflow:hidden; }
+    /* Sidebar */
+    .sidebar { width:var(--sidebar-w); flex-shrink:0; background:var(--bg-surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; }
+    .sidebar-brand { padding:22px 20px 18px; border-bottom:1px solid var(--border); }
+    .brand-name { font-size:15px; font-weight:600; }
+    .brand-sub  { font-size:12px; color:var(--text-tertiary); margin-top:2px; }
+    .nav { padding:10px 0; flex:1; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:14px; color:var(--text-secondary); cursor:pointer; transition:background 0.12s,color 0.12s; user-select:none; }
+    .nav-item:hover { background:var(--bg-muted); color:var(--text-primary); }
+    .nav-item.active { background:var(--bg-muted); color:var(--text-primary); font-weight:500; }
+    .nav-icon { width:16px; height:16px; flex-shrink:0; opacity:0.65; }
+    .nav-item.active .nav-icon { opacity:1; }
+    .nav-badge { margin-left:auto; background:#E5342A; color:#fff; font-size:11px; font-weight:600; border-radius:20px; padding:1px 7px; }
+    .sidebar-user { padding:14px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .user-avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; flex-shrink:0; }
+    .user-name { font-size:13px; font-weight:500; }
+    .user-dept { font-size:11px; color:var(--text-tertiary); }
+    /* Main */
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .hero { background:var(--bg-surface); border-bottom:1px solid var(--border); padding:22px 28px 20px; flex-shrink:0; }
+    .hero-top { display:flex; align-items:flex-start; justify-content:space-between; }
+    .hero-name { font-size:22px; font-weight:600; letter-spacing:-0.4px; min-height:28px; }
+    .hero-dept { font-size:14px; color:var(--text-secondary); margin-top:3px; min-height:20px; }
+    .gpa-block { text-align:right; }
+    .gpa-value { font-size:28px; font-weight:600; color:var(--accent); line-height:1; min-height:32px; }
+    .gpa-label { font-size:12px; color:var(--text-tertiary); margin-top:3px; }
+    .progress-section { margin-top:18px; }
+    .progress-header { display:flex; justify-content:space-between; margin-bottom:8px; }
+    .progress-label { font-size:13px; font-weight:500; }
+    .progress-credits { font-size:13px; font-weight:600; }
+    .progress-track { position:relative; height:10px; background:var(--bar-track); border-radius:20px; overflow:hidden; }
+    .progress-fill-completed  { position:absolute; left:0; top:0; height:100%; background:var(--bar-completed); border-radius:20px; width:0; transition:width 0.6s ease; }
+    .progress-fill-inprogress { position:absolute; top:0; height:100%; background:var(--bar-inprogress); border-radius:0 20px 20px 0; width:0; left:0; transition:width 0.6s ease,left 0.6s ease; }
+    .progress-legend { display:flex; justify-content:space-between; margin-top:8px; }
+    .legend-left { display:flex; gap:16px; }
+    .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); }
+    .legend-dot { width:8px; height:8px; border-radius:50%; }
+    .legend-remaining { font-size:12px; color:var(--text-tertiary); }
+    /* Content */
+    .content { flex:1; overflow-y:auto; padding:24px 28px 40px; }
+    .req-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card); }
+    .req-card-title { font-size:15px; font-weight:600; }
+    .cat-row { padding:16px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.12s; }
+    .cat-row:last-child { border-bottom:none; }
+    .cat-row:hover { background:var(--bg-muted); }
+    .cat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .cat-left { display:flex; align-items:center; gap:8px; }
+    .cat-name { font-size:14px; font-weight:500; }
+    .cat-chevron { width:14px; height:14px; color:var(--text-tertiary); transition:transform 0.2s; flex-shrink:0; }
+    .cat-chevron.open { transform:rotate(180deg); }
+    .cat-count { font-size:13px; color:var(--text-secondary); font-weight:500; }
+    .cat-bar-track { height:7px; background:var(--bar-track); border-radius:20px; overflow:hidden; }
+    .cat-bar-fill { height:100%; border-radius:20px; transition:width 0.5s ease; }
+    .cat-detail { display:none; margin-top:12px; }
+    .cat-detail.open { display:block; }
+    .course-list { display:flex; flex-direction:column; gap:6px; }
+    .course-item { display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--bg-page); border-radius:var(--radius-sm); font-size:13px; }
+    .course-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .course-item-code { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; min-width:80px; color:var(--text-secondary); }
+    .course-item-name { flex:1; }
+    .course-item-status { font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; }
+    .status-done   { background:#DCFCE7; color:#166534; }
+    .status-ip     { background:#DBEAFE; color:#1E40AF; }
+    .status-remain { background:var(--bg-muted); color:var(--text-tertiary); border:1px solid var(--border); }
+    /* Loading / empty */
+    .loading-msg, .empty-msg { padding:32px; text-align:center; color:var(--text-tertiary); font-size:13px; }
+    .help-btn { position:fixed; bottom:24px; right:24px; width:36px; height:36px; border-radius:50%; background:var(--bg-surface); border:1px solid var(--border-med); box-shadow:0 2px 8px rgba(0,0,0,0.10); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); font-size:15px; font-weight:600; transition:background 0.12s,color 0.12s; }
+    .help-btn:hover { background:var(--accent); color:#fff; }
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">UniTrack</div>
+      <div class="brand-sub">Degree Progress System</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M5 8h6M5 11h4"/></svg>Home
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M5 1.5v2M11 1.5v2M2 6.5h12"/></svg>Schedule
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4.5h12M2 8h8M2 11.5h5"/></svg>Registration
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/><path d="M8 12v2"/><path d="M6 13.5h4"/></svg>Alerts
+        <span class="nav-badge" id="alert-badge" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">—</div>
+      <div>
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-dept" id="user-dept"></div>
+      </div>
+    </div>
+  </nav>
+ 
+  <div class="main">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-name" id="hero-name"></div>
+          <div class="hero-dept" id="hero-dept"></div>
+        </div>
+        <div class="gpa-block">
+          <div class="gpa-value" id="gpa-value">—</div>
+          <div class="gpa-label">Current GPA</div>
+        </div>
+      </div>
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">Degree Progress</span>
+          <span class="progress-credits" id="progress-credits">— / — credits</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill-completed"  id="bar-completed"></div>
+          <div class="progress-fill-inprogress" id="bar-inprogress"></div>
+        </div>
+        <div class="progress-legend">
+          <div class="legend-left">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--bar-completed)"></span>
+              <span id="legend-completed">Completed: —</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--bar-inprogress)"></span>
+              <span id="legend-inprogress">In Progress: —</span>
+            </div>
+          </div>
+          <span class="legend-remaining" id="legend-remaining">— credits remaining</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="content">
+      <div class="req-card" id="req-card">
+        <div style="padding:20px 18px 4px">
+          <div class="req-card-title">Requirement Categories</div>
+        </div>
+        <div class="loading-msg" id="req-loading">Loading degree requirements…</div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<div class="help-btn" title="Help">?</div>
+ 
+<script src="api.js"></script>
+<script src="nav.js"></script>
+<script>
+  const CAT_COLORS = ['var(--cat-orange)','var(--cat-blue)','var(--cat-purple)','var(--cat-green)','var(--cat-teal)'];
+ 
+  function toggleCat(row) {
+    const chevron = row.querySelector('.cat-chevron');
+    const detail  = row.querySelector('.cat-detail');
+    chevron.classList.toggle('open', !detail.classList.contains('open'));
+    detail.classList.toggle('open');
+  }
+ 
+  function setText(id, val) { const e = document.getElementById(id); if (e) e.textContent = val; }
+ 
+  async function loadHome() {
+    // ── Student ──────────────────────────────────────────────────────
+    const student = await API.getStudent();
+    if (student) {
+      const name      = student.name  || '—';
+      const major     = student.major || '—';
+      const gpa       = parseFloat(student.gpa || 0).toFixed(2);
+      const comp      = parseInt(student.creditsCompleted  || student.totalCreditHours || 0);
+      const ip        = parseInt(student.creditsInProgress || 0);
+      const req       = parseInt(student.creditsRequired   || 120);
+      const remaining = Math.max(0, req - comp - ip);
+      const initials  = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) || '—';
+ 
+      setText('hero-name',        name);
+      setText('hero-dept',        major);
+      setText('gpa-value',        gpa);
+      setText('progress-credits', `${comp} / ${req} credits`);
+      setText('legend-completed', `Completed: ${comp}`);
+      setText('legend-inprogress',`In Progress: ${ip}`);
+      setText('legend-remaining', `${remaining} credits remaining`);
+      setText('user-name',        name);
+      setText('user-dept',        major);
+      setText('user-avatar',      initials);
+ 
+      const compPct = req > 0 ? (comp / req) * 100 : 0;
+      const ipPct   = req > 0 ? (ip   / req) * 100 : 0;
+      document.getElementById('bar-completed').style.width  = compPct.toFixed(2) + '%';
+      document.getElementById('bar-inprogress').style.left  = compPct.toFixed(2) + '%';
+      document.getElementById('bar-inprogress').style.width = ipPct.toFixed(2)   + '%';
+    }
+ 
+    // ── Alert badge ───────────────────────────────────────────────────
+    const alerts = await API.getAlerts();
+    if (alerts && alerts.length > 0) {
+      const b = document.getElementById('alert-badge');
+      b.textContent = alerts.length;
+      b.style.display = '';
+    }
+ 
+    // ── Audit / requirement categories ────────────────────────────────
+    const audit = await API.getAudit();
+    document.getElementById('req-loading').remove();
+    const card = document.getElementById('req-card');
+ 
+    if (!audit || !audit.categories || audit.categories.length === 0) {
+      const e = document.createElement('div');
+      e.className = 'empty-msg';
+      e.textContent = 'No requirement data available yet.';
+      card.appendChild(e);
+      return;
+    }
+ 
+    audit.categories.forEach((cat, i) => {
+      const color   = CAT_COLORS[i % CAT_COLORS.length];
+      const total   = parseInt(cat.total    || cat.required || 0);
+      const done    = parseInt(cat.completed || cat.done    || 0);
+      const pct     = total > 0 ? Math.min(100,(done/total)*100) : 0;
+      const label   = cat.name || cat.category || cat.title || `Category ${i+1}`;
+      const courses = cat.courses || cat.courseList || [];
+ 
+      const courseRows = courses.length > 0
+        ? courses.map(c => {
+            const isComp = c.completed === true || c.completed === 'true';
+            const isIP   = !isComp && (c.inProgress === true || c.inProgress === 'true');
+            const dot    = isComp ? 'var(--bar-completed)' : isIP ? 'var(--bar-inprogress)' : 'var(--bar-track)';
+            const cls    = isComp ? 'status-done' : isIP ? 'status-ip' : 'status-remain';
+            const lbl    = isComp ? 'Completed'   : isIP ? 'In Progress' : 'Remaining';
+            return `<div class="course-item">
+              <span class="course-item-dot" style="background:${dot}"></span>
+              <span class="course-item-code">${c.code || c.courseCode || ''}</span>
+              <span class="course-item-name">${c.name || c.courseName || ''}</span>
+              <span class="course-item-status ${cls}">${lbl}</span>
+            </div>`;
+          }).join('')
+        : `<div style="font-size:13px;color:var(--text-tertiary);padding:4px 0">No courses listed.</div>`;
+ 
+      const row = document.createElement('div');
+      row.className = 'cat-row';
+      row.onclick   = function(){ toggleCat(this); };
+      row.innerHTML = `
+        <div class="cat-header">
+          <div class="cat-left">
+            <span class="cat-name">${label}</span>
+            <svg class="cat-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
+          </div>
+          <span class="cat-count">${done} / ${total} courses</span>
+        </div>
+        <div class="cat-bar-track">
+          <div class="cat-bar-fill" style="width:${pct.toFixed(1)}%;background:${color}"></div>
+        </div>
+        <div class="cat-detail"><div class="course-list">${courseRows}</div></div>`;
+      card.appendChild(row);
+    });
+  }
+ 
+  loadHome();
+</script>
+</body>
+</html>

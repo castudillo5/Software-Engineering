@@ -1,0 +1,26 @@
+# Build outputs — anyone can regenerate these by building the project.
+x64/
+Debug/
+Release/
+*.obj
+*.pdb
+*.exe
+*.ilk
+*.exp
+*.lib
+*.tlog
+*.lastbuildstate
+*.log
+softProject.tlog/
+
+# Visual Studio user-specific files — these contain absolute paths and
+# personal preferences that should NOT be shared with teammates.
+.vs/
+*.user
+*.suo
+*.opensdf
+*.sdf
+*.opendb
+
+# Runtime-generated files. Each user generates their own.
+data/dismissed_alerts.txt
